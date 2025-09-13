@@ -1,0 +1,179 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MoneyTransaction
+{
+    class Program
+    {
+        static void Main()
+        {
+            int balance = 1000;
+            string choice;
+
+           
+
+           
+            do
+            {
+                //using \n
+                Console.WriteLine("Your Wallet balance is k1000 \n 1. Send Money\n 2. Withdraw\n 3. Check Balance\n 4. Make Payment\n 5. Exit\n Please enter your choice:  ");
+                int option = int.Parse(Console.ReadLine());
+                switch (option)
+                {
+                    case 1: //sending money
+                        Console.WriteLine("Enter Receivers Number: ");
+                        int PhoneNo = int.Parse(Console.ReadLine());
+                        Console.WriteLine("How much money do you wish to send? ");
+                        int SendingAmt = int.Parse(Console.ReadLine());
+
+                        //if statement for insuffient funds.
+                        if (SendingAmt > balance)
+                        {
+                            Console.WriteLine("You have insuffient funds!\a");
+                        }
+                        else if (SendingAmt <= balance)
+                        {
+                            Console.WriteLine("You have sent k" + SendingAmt + " To this Phone Number:  " + PhoneNo);
+                            balance = balance - SendingAmt;
+                            Console.WriteLine("Your New Balance is: k" + balance);
+                            Console.WriteLine("Thank you!");
+                        }
+                        break;
+
+                    case 2: //withdraw
+                        Console.WriteLine("How much do you want to withdraw?");
+                        int withdrawAmt = int.Parse(Console.ReadLine());
+
+                        //if statement for insuffient funds.
+                        if (withdrawAmt > balance)
+                        {
+                            Console.WriteLine("You have insuffient funds!\a");
+                        }
+                        else if (withdrawAmt <= balance)
+                        {
+                            Console.WriteLine("Enter agent code/number:");
+
+                            int agent = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Successfully withdrawn k" + withdrawAmt + " from Agent " + agent);
+                            balance = balance - withdrawAmt;
+                            Console.WriteLine("Your current balance is k" + balance);
+                        }
+                        break;
+
+                    case 3:  //Check balance
+                        Console.WriteLine("Your Balance is: k" + balance);
+                        break;
+
+                    case 4: //Make Payment
+                        Console.WriteLine("Make Payment: \n 1. Unilus fees. \n 2. Zesco units. \n 3. Dstv \n 4. Water Bill.");
+                        int pay = int.Parse(Console.ReadLine());
+                        switch (pay)
+                        {
+                            case 1: // unilus
+                                Console.WriteLine("University of Lusaka fee Payment: \n Enter Student Number:");
+
+                                int studentId = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Enter amount: ");
+                                int fee = int.Parse(Console.ReadLine());
+
+                                //if statement for insuffient funds.
+                                if (fee > balance)
+                                {
+                                    Console.WriteLine("You have insuffient funds!\a");
+                                }
+                                else if (fee <= balance)
+                                {
+                                    Console.WriteLine("Successfully paid k" + fee + " for Student Number " + studentId);
+                                    balance = balance - fee;
+                                    Console.WriteLine("Your current balance is: k" + balance  + " \n Thank You!");
+                                }
+                                break;
+
+                            case 2://zesco
+                                Console.WriteLine("ZESCO Payment: \n Enter Meter Number:");
+
+                                int meterNum = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Enter amount: ");
+                                int UnitsAmount = int.Parse(Console.ReadLine());
+
+                                //if statement for insuffient funds.
+                                if (UnitsAmount > balance)
+                                {
+                                    Console.WriteLine("You have insuffient funds!\a");
+                                }
+                                else if (UnitsAmount <= balance)
+                                {
+                                    Console.WriteLine("Successfully paid k" + UnitsAmount + " for Zesco Meter Number " + meterNum);
+                                    balance = balance - UnitsAmount;
+                                    Console.WriteLine("Your current balance is: k" + balance  + " \n Thank You!");
+                                }
+                                break;
+
+                            case 3: //Dstv
+                                Console.WriteLine("Dstv Payment: \n Enter Account/dish Number:");
+
+                                int dishId = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Enter amount: ");
+                                int Dstvfee = int.Parse(Console.ReadLine());
+
+                                //if statement for insuffient funds.
+                                if (Dstvfee > balance)
+                                {
+                                    Console.WriteLine("You have insuffient funds!\a");
+                                }
+                                else if (Dstvfee <= balance)
+                                {
+                                    Console.WriteLine("Successfully paid k" + Dstvfee + " for your Dstv Account Number " + dishId);
+                                    balance = balance - Dstvfee;
+                                    Console.WriteLine("Your current balance is: k" + balance + " \n Thank You!");
+                                }
+                                break;
+                            case 4: //water bill
+                                Console.WriteLine("Water Bill Payment: \n Enter Account Number:");
+
+                                int WaterId = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Enter amount: ");
+                                int Waterfee = int.Parse(Console.ReadLine());
+
+                                //if statement for insuffient funds.
+                                if (Waterfee > balance)
+                                {
+                                    Console.WriteLine("You have insuffient funds!\a");
+                                }
+                                else if (Waterfee <= balance)
+                                {
+                                    Console.WriteLine("Successfully paid k" + Waterfee + " for your Water Account Number " + WaterId);
+                                    balance = balance - Waterfee;
+                                    Console.WriteLine("Your current balance is: k" + balance  + " \n Thank You!");
+                                }
+                                break;
+                        }
+                        break;
+
+                    case 5:
+                        //For Exiting or Closing.
+                        System.Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid Option");
+                        break;
+                }
+
+                //statement that will control looping 
+
+                Console.WriteLine("Do you want to make a Transaction? (type yes or no)");
+                choice = Console.ReadLine();
+
+            } while (choice == "yes");
+            //if noy "yes" it jumps out of loop and prints this
+            Console.WriteLine("Thank you for transacting with Mulima's Services.");
+            Console.ReadLine();
+
+
+        }
+    }
+}
+
