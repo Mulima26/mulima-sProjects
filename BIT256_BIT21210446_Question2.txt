@@ -1,0 +1,127 @@
+package Student;
+
+
+import java.util.*;
+
+public class StudentRecord2 {
+    private int id;
+    private String name;
+    private double grade;
+
+    public StudentRecord2(int id, String name, double grade) {
+        this.id = id;
+        this.name = name;
+        this.grade = grade;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getGrade() {
+        return grade;
+    }
+
+    public void setGrade(double grade) {
+        this.grade = grade;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Name: " + name + ", Grade: " + grade;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<StudentRecord2> records = new ArrayList<>();
+        System.out.println("Select an option:");
+            
+
+        while (true) {
+            System.out.println("1. Add a student record");
+            System.out.println("2. Display all student records");
+            System.out.println("3. Search for a student by ID");
+            System.out.println("4. Sort student records by ID");
+            System.out.println("5. Sort student records by descending grades");
+            System.out.println("6. Exit");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter ID:");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Enter name:");
+                    String name = scanner.nextLine();
+                    System.out.println("Enter grade:");
+                    double grade = scanner.nextDouble();
+                    StudentRecord2 record = new StudentRecord2(id, name, grade);
+                    records.add(record);
+                    break;
+                case 2:
+                    for (StudentRecord2 r : records) {
+                        System.out.println(r.toString());
+                    }
+                    break;
+                case 3:
+                    System.out.println("Enter ID to search:");
+                    int searchId = scanner.nextInt();
+                    boolean found = false;
+                    for (StudentRecord2 r : records) {
+                        if (r.getId() == searchId) {
+                            System.out.println(r.toString());
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        System.out.println("Student record not found.");
+                    }
+                    break;
+                case 4:
+                    // Sort by ID using Insertion sort
+                    for (int i = 1; i < records.size(); i++) {
+                        StudentRecord2 key = records.get(i);
+                        int j = i - 1;
+                        while (j >= 0 && records.get(j).getId() > key.getId()) {
+                            records.set(j + 1, records.get(j));
+                            j--;
+                        }
+                        records.set(j + 1, key);
+                    }
+                    System.out.println("Student records sorted by ID:");
+                    for (StudentRecord2 r : records) {
+                        System.out.println(r.toString());
+                    }
+                    break;
+                case 5:
+                    // Sort by descending grades using Bubble sort
+                    boolean swapped = true;
+                    int j = 0;
+                    while (swapped) {
+                        swapped = false;
+                        j++;
+                        for (int i = 0; i < records.size() - j; i++) {
+                            if (records.get(i).getGrade() < records.get(i + 1).getGrade()) {
+                                StudentRecord2 temp = records.get(i);
+                                records.set(i, records.get(i + 1));
+                                records.set(i + 1, temp);
+                                swapped = true;
+                            }
+                        }
+                    }
+                    System.out.println("Student records sorted by descending grades:"+ records);
+                    break;
+                case 6:
+                     System.exit(0);
+            default:
+                System.out.println("choice not among options\nRE-ENTER CHOICE");
+            }
+        }
+    }
+}
