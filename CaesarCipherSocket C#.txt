@@ -1,0 +1,164 @@
+ using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CaesarCipherSocket
+{
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            string choice;
+            do
+            { // Loop to keep the program running
+
+                Console.WriteLine("Welcome to Mulima's Encryption System! (Using Caesar Cipher)" + "\n" + "Choose an option:" + "\n" + "1. Run Receiver" + "\n" + "2. Run Sender" + "\n" + "3. Exit" + "\n");
+
+                int option = int.Parse(Console.ReadLine());
+                switch (option)
+                {
+                    case 1:      // Run Receiver
+                        Receiver receiver = new Receiver();
+                        Console.WriteLine("You have selected 'Receiver'" + "\n" + "Enter Port to listen on (0 to 65535):");
+                        int port = int.Parse(Console.ReadLine());
+                        receiver.Start(port);
+                        break;
+
+                    case 2:       // Run Sender
+                        Sender sender = new Sender();
+                        Console.WriteLine("You have selected 'Sender'" + "\n" + "Enter Receiver Port (0 to 65535):");
+                        int receiverPort = int.Parse(Console.ReadLine());
+                        sender.Start(receiverPort);
+
+                        break;
+
+                    case 3:          // Exit the program
+
+                        Console.WriteLine("Exiting...");
+                        Console.WriteLine("Thank you for using Mulima's system.");
+                        Environment.Exit(0); //helps close the program 
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+
+                Console.WriteLine("Do you want to send another message? Yes or No"); //question for loop to terminate or continue
+                choice = Console.ReadLine();
+
+            } while (choice == "yes");
+            Console.WriteLine("Thank you for using Mulima's system.");
+        }
+    }
+
+    public static class CipherFunction
+    {
+        public static string Encrypt(string plainText, int key)
+        {
+            string cipherText = "";
+            foreach (char ct in plainText) //foreach loop to go through each letter
+            {
+                if (char.IsLetter(ct)) //checks if plaintext is an actual letter
+                {
+                    char StartAlphaLetter = char.IsUpper(ct) ? 'A' : 'a'; //Startalpha is a starting marker for the alphabet either lowercase or uppercase
+                    cipherText += (char)((ct - StartAlphaLetter + key) % 26 + StartAlphaLetter);
+                    //accepts characters, spaces, numbers, and punctuation
+                }
+                else
+                {
+                    cipherText += ct; 
+                }
+            }
+            return cipherText;
+        }
+
+        public static string Decrypt(string cipherText, int key)
+        {
+            //  keeps value within 0-25
+            int effectiveKey = (26 - (key % 26)) % 26;
+            return Encrypt(cipherText, effectiveKey);
+        }
+    }
+
+    public class Receiver
+    {
+        public void Start(int port)
+        {
+            try
+            {
+                TcpListener listener = new TcpListener(IPAddress.Any, port);
+                listener.Start();
+
+                Console.WriteLine("Waiting for connection...");
+                TcpClient client = listener.AcceptTcpClient();
+
+                NetworkStream stream = client.GetStream();
+                Console.WriteLine("Connection successful!");
+
+                byte[] bytebuffer = new byte[1024];
+                int bytesRead = stream.Read(bytebuffer, 0, bytebuffer.Length);
+                string receivedMessage = Encoding.ASCII.GetString(bytebuffer, 0, bytesRead);
+
+                Console.WriteLine("Received encrypted message: " + receivedMessage);
+
+                Console.WriteLine("Do you want to decrypt? (y/n)");
+                string decryptOption = Console.ReadLine();
+
+                if (decryptOption.ToLower() == "y")
+                {
+                    Console.WriteLine("Enter Caesar Cipher key:");
+                    int key = int.Parse(Console.ReadLine());
+
+                    string decryptedMessage = CipherFunction.Decrypt(receivedMessage, key);
+                    Console.WriteLine("Decrypted message: " + decryptedMessage);
+                }
+
+                stream.Close();
+                client.Close();
+                listener.Stop();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in Receiver: " + ex.Message);
+            }
+        }
+    }
+
+    public class Sender
+    {
+        public void Start(int receiverPort)
+        {
+            try
+            {
+                string receiverIp = "192.168.56.1";   // Fixed IP address (Machine-localhost)
+
+                TcpClient client = new TcpClient(receiverIp, receiverPort);
+
+                Console.WriteLine("IP address: 192.168.56.1 (For this device)");
+                Console.WriteLine("Enter message to send:");
+                string message = Console.ReadLine();
+
+                Console.WriteLine("Enter Caesar Cipher key:");
+                int key = int.Parse(Console.ReadLine());
+
+                string encryptedMessage = CipherFunction.Encrypt(message, key);
+
+                NetworkStream stream = client.GetStream();
+                byte[] bytedata = Encoding.ASCII.GetBytes(encryptedMessage);
+                stream.Write(bytedata, 0, bytedata.Length);
+
+                Console.WriteLine("Encrypted message sent: " + encryptedMessage);
+
+                stream.Close();
+                client.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in Sender: " + ex.Message);
+            }
+        }
+    }
+}
