@@ -1,0 +1,56 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace program1
+{
+    class LinearsearchArray
+    {
+        static void Main()
+        {
+            int found = 0, count=0 ;
+            int[] marks = new int[10];
+            Console.WriteLine("Enter number of elements : ");
+            int num = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter " + num + " elements:");
+            for (int i = 0; i < num; i++)
+            {
+                marks[i] = int.Parse(Console.ReadLine());
+            }
+            Console.WriteLine("Entered elements are: ");
+            for (int i = 0; i < num; i++)
+            {
+                Console.WriteLine(marks[i]);
+            }
+            //search element
+            Console.WriteLine("Enter the search element:");
+            int search = int.Parse(Console.ReadLine());
+
+            // logic for the linear search
+            for (int i = 0; i < num; i++)
+            {
+                if (search == marks[i])
+                {
+                    Console.WriteLine(search + " is found at position " + (i + 1));
+                    found = 1; //when element is found it changes to 1
+                    count++;  //counts the element
+                } 
+
+            }
+            
+            //for an element thats not found or if(found==0)
+                if (found==0)
+                {
+                    Console.WriteLine(search + " Element Not found in list");
+
+                } else
+            {
+                Console.WriteLine(search + " is found " +count+ " times"); //prints number of times its appearing
+
+            }
+            Console.ReadLine();
+        }
+    }
+}
