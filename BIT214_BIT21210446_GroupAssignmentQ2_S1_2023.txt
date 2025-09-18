@@ -1,0 +1,974 @@
+//Driver Program
+public class DriverMain {
+    public static void main (String []args){
+        Login log = new Login();
+        log.setVisible(true);
+        
+    }
+}
+
+
+//Login Page subclass
+
+import java.sql.*;
+import javax.swing.*;
+
+
+import javax.swing.border.MatteBorder;
+
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+public class Login extends JFrame {
+
+   
+    
+    public Login(){
+        super("login");
+        initComponents();
+        
+    }
+    
+    
+    
+        
+    
+    public void initComponents(){
+
+        mainPanel = new JPanel();
+        Heading = new JLabel();
+        userLabel = new JLabel();
+        passwordLabel = new JLabel();
+        userText = new JTextField();
+        passwordText = new JPasswordField();
+        logBtn = new JButton();
+        clrBtn = new JButton();
+        success = new JLabel();
+        viewPassword = new JCheckBox();
+      
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Employee Login");
+        
+
+        
+        mainPanel.setBorder(new MatteBorder(null));
+        mainPanel.setLayout(null);
+        mainPanel.setSize(546, 400);
+         getContentPane().add(mainPanel, BorderLayout.CENTER);
+       
+
+     
+        Heading.setText("Employee Login");
+        Heading.setFont(new Font("Arial Rounded MT Bold", 1, 20));
+        Heading.setBounds(190, 40, 170, 40);
+        mainPanel.add(Heading);
+
+        
+        userLabel.setText("Username:");
+        userLabel.setBounds(88, 126, 85, 30);
+        mainPanel.add(userLabel);
+
+        passwordLabel.setText("Password:");
+        passwordLabel.setBounds(88, 177, 85, 30);
+        mainPanel.add(passwordLabel);
+        
+        userText.setBounds(191, 123, 205, 30);
+        mainPanel.add(userText);
+
+        passwordText.setBounds(189, 174, 207, 30);
+        mainPanel.add(passwordText);
+
+        logBtn.setBackground(new Color(204, 204, 204));
+        logBtn.setFont(new Font("Tahoma", 0, 12)); // NOI18N
+        logBtn.setText("Login");
+        logBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                logBtnActionPerformed(evt);
+            }
+        });
+        logBtn.setBounds(133, 261, 71, 30);
+        mainPanel.add(logBtn);
+
+        clrBtn.setBackground(new Color(204, 204, 204));
+        clrBtn.setFont(new Font("Tahoma", 0, 12)); // NOI18N
+        clrBtn.setText("Clear");
+        clrBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                clrBtnActionPerformed(evt);
+            }
+        });
+        clrBtn.setBounds(339, 261, 71, 30);
+        mainPanel.add(clrBtn);
+
+        
+
+       
+
+        success.setBackground(new java.awt.Color(51, 255, 0));
+        success.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        success.setBounds(189, 201, 207, 25);
+        mainPanel.add(success);
+
+        
+        viewPassword.setText("Show password");
+        viewPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewPasswordActionPerformed(evt);
+            }
+        });
+        viewPassword.setBounds(220, 220, 200, 30);
+        mainPanel.add(viewPassword);
+        
+        setSize(new Dimension(546, 400));
+        setResizable(false); // disables maximization
+        setLocationRelativeTo(null);
+        
+    }
+                                               
+
+    private void clrBtnActionPerformed(ActionEvent evt) {                                       
+     if (evt.getSource() == clrBtn){
+                userText.setText(null);
+                passwordText.setText(null);
+            }
+    }                                      
+
+    private void logBtnActionPerformed(ActionEvent evt) {                                       
+        if(evt.getSource()==logBtn){
+            String user = userText.getText();
+            String password = passwordText.getText();
+             // Print out the login and password entered by the user for debugging purposes
+                    System.out.println("Login: " + user);
+                    System.out.println("Password: " + password);
+                
+                
+                
+            
+            try{
+            //open connection
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc:derby://musi_trading_inventory","root","Victoria2629");
+                
+            String sql = "Select * from `musi_trading_inventory`.`authentication` where UserName='"+ user +"' and password='"+ password +"'";
+            Statement stm = con.createStatement();
+            ResultSet rs = stm.executeQuery(sql);
+            if(rs.next()){ 
+                System.out.println("Login successful!");
+                setVisible(false);            
+                Menu menu = new Menu();
+                menu.setVisible(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(this,"Username or password is wrong");
+                userText.setText("");
+                passwordText.setText("");
+                System.out.println("invalid username or password");
+            }
+            con.close();
+            
+            
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(this,"Connection faliure");
+            
+        }
+        }    
+    }
+        
+        
+    private void viewPasswordActionPerformed(java.awt.event.ActionEvent evt) {                                             
+     
+        if (viewPassword.isSelected()){
+            passwordText.setEchoChar((char)0);
+             
+        }
+        else{
+            passwordText.setEchoChar('*');
+            
+        }
+    }                                            
+
+                                    
+
+    public static void main(String args[]) {
+        Login login = new Login();
+        login.setVisible(true);
+          
+    }
+    
+        
+    private JLabel Heading;   
+    private JButton clrBtn;
+    private JButton logBtn;
+    private JPanel mainPanel;
+    private JLabel passwordLabel;
+    private JPasswordField passwordText;
+    public JLabel success;
+    private JLabel userLabel;
+    private JTextField userText;
+    private JCheckBox viewPassword;
+    
+
+    private ResultSet executeQuery(String sql) {
+        this.setVisible(false);
+        return null;
+    }
+    
+   
+ }
+
+
+
+//Menu page
+import java.awt.Font;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class Menu extends JFrame {
+    
+    JButton transBtn;
+    JButton disBtn;
+    JButton updBtn;
+    JPanel p;
+    JLabel header;
+    
+    public Menu(){
+        super("menu");
+        initComponents();
+    }
+
+    private void initComponents() {
+        transBtn = new JButton();
+        disBtn = new JButton();
+        updBtn = new JButton();
+        p = new JPanel();
+        header = new JLabel();
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 500);
+        setLayout(null);
+        
+        header.setText("Welcome");
+        header.setBounds(180, 30, 120, 30);
+        header.setFont(new Font("Arial Rounded MT Bold", 1, 25));
+        p.add(header);
+        
+        p.setLayout(null);
+        p.setSize(500, 500);
+        getContentPane().add(p);
+        
+        transBtn.setText("Transfer Stock");
+        transBtn.setBounds(170, 130, 140, 50);
+        p.add(transBtn);
+        transBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                transBtnActionPerformed(evt);
+            }
+
+            private void transBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource() == transBtn){
+                    setVisible(false);
+                    RetailPoint retail = new  RetailPoint();
+                    retail.setVisible(true);
+                    
+                }           
+            }
+        });
+        
+        disBtn.setText("Display Stock");
+        disBtn.setBounds(170, 220, 140, 50);
+        p.add(disBtn);
+        disBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                disBtnActionPerformed(evt);
+            }
+
+            private void disBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource() == disBtn){
+                    setVisible(false);
+                    StockDisplay stckDis = new  StockDisplay();
+                    stckDis.setVisible(true);
+                    
+                    
+                }           
+            }
+        });
+        
+        updBtn.setText("Update Stock");
+        updBtn.setBounds(170, 310, 140, 50);
+        p.add(updBtn);
+        updBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                updBtnActionPerformed(evt);
+            }
+
+            private void updBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource() == updBtn){
+                    setVisible(false);
+                    InvEntry entry = new  InvEntry();
+                    entry.setVisible(true);
+                }           
+            }
+        });
+    setResizable(false);
+    setLocationRelativeTo(null);
+    }
+    public static void main (String[]args){
+        Menu menu = new Menu();
+        menu.setVisible(true);
+    }
+    
+}
+
+
+
+//Updating inventory Page
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import javax.swing.*;
+import java.sql.Statement;
+
+public class InvEntry extends JFrame{
+    
+    private JPanel invPanel;
+    private JLabel prodIdLabel;
+    private JLabel prodLabel;
+    private JLabel catLabel;
+    private JLabel qtyLabel;
+    private JLabel priceLabel;
+    private JLabel totalLabel;
+    private JTextField prodIdTxt;
+    private JTextField prodTxt;
+    private JTextField catTxt;
+    private JTextField qtyTxt;
+    private JTextField priceTxt;
+    private JButton clrBtn;
+    private JButton submitBtn;
+    private JButton backBtn;
+    private JLabel title;
+    private JButton finBtn;
+            
+    public InvEntry(){
+        super("Inventory Entry");
+
+        initComponents();
+        
+    }
+
+    private void initComponents() {
+        
+        invPanel = new JPanel();
+        prodIdLabel = new JLabel();
+        prodLabel = new JLabel();
+        catLabel = new JLabel();
+        qtyLabel = new JLabel();
+        priceLabel = new JLabel();
+        totalLabel = new JLabel();
+        prodIdTxt = new JTextField();
+        prodTxt = new JTextField();
+        catTxt = new JTextField();
+        qtyTxt = new JTextField();
+        priceTxt = new JTextField();
+        clrBtn = new JButton();
+        submitBtn = new JButton();
+        backBtn = new JButton();
+        title = new JLabel();
+        finBtn = new JButton();
+        
+        
+        
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Stock Entry");
+        
+        invPanel.setBounds(0,0,700, 700);
+        getContentPane().add(invPanel);
+        invPanel.setLayout(null);
+        
+        title.setText("New Inventory Entries");
+        title.setBounds(140, 10, 200, 60);
+        title.setFont(new Font("Arial Rounded MT Bold", 1, 17));
+        invPanel.add(title);
+        
+        prodIdLabel.setText("Product ID: ");
+        prodIdLabel.setBounds(60,90,120, 30);
+        invPanel.add(prodIdLabel);
+        
+       
+        prodIdTxt.setBounds(200,90,215, 30);
+        invPanel.add(prodIdTxt);
+        
+        
+        prodLabel.setText("Product Name: ");
+        prodLabel.setBounds(60,130,120, 30);
+        invPanel.add(prodLabel);
+        
+        prodTxt.setBounds(200,130,215, 30);
+        invPanel.add(prodTxt);
+        
+        catLabel.setText("Category: ");
+        catLabel.setBounds(60,170,120, 30);
+        invPanel.add(catLabel);
+        
+        catTxt.setBounds(200,170,215, 30);
+        invPanel.add(catTxt);
+        
+        qtyLabel.setText("Quantity: ");
+        qtyLabel.setBounds(60,210,120, 30);
+        invPanel.add(qtyLabel);
+        
+        qtyTxt.setBounds(200,210,215, 30);
+        invPanel.add(qtyTxt);
+        
+        priceLabel.setText("Unit Price: ");
+        priceLabel.setBounds(60,250,120, 30);
+        invPanel.add(priceLabel);
+        
+        priceTxt.setBounds(200,250,215, 30);
+        invPanel.add(priceTxt);
+        
+        submitBtn.setText("Submit") ;
+        submitBtn.setBounds(70,320,90,30);
+        invPanel.add(submitBtn);
+        submitBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                SubmitBtnActionPerformed(evt);
+            }
+            
+            
+
+            private void SubmitBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource() == submitBtn){
+                    try{
+                        //open connection
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc:derby://musi_trading_inventory","root","Victoria2629");
+
+                        String prodId = prodIdTxt.getText();
+                        String prodName = prodTxt.getText();
+                        String category = catTxt.getText();
+                        String quantityStr = qtyTxt.getText();
+                        int quantity = Integer.parseInt(quantityStr);
+                        String unitPriceStr = priceTxt.getText();
+                        double unitPrice = Double.parseDouble(unitPriceStr);
+
+                        String sql = "INSERT INTO `musi_trading_inventory`.`warehouse_stock` \n" +
+                        "(`ProdID`, `ProductName`, `Category`, `Quantity`, `UnitPrice`) \n" +
+                        "VALUES ('"+prodId+"', '"+prodName+"', '"+category+"', '"+quantity+"', '"+unitPrice+"')";
+                        Statement stm = con.createStatement();
+                        int rs = stm.executeUpdate(sql);
+
+                        dispose();
+                        JOptionPane.showMessageDialog(null,"Entries Successful");
+                        prodIdTxt.setText(null);
+                        prodTxt.setText(null);
+                        catTxt.setText(null);
+                        qtyTxt.setText(null);
+                        priceTxt.setText(null);
+                    
+                    }
+                    
+                    catch(Exception e){
+                        System.out.println(e.getMessage());
+                        JOptionPane.showMessageDialog(null,"Error Failed to update database");
+                    }
+                }
+            }
+        });
+        
+        finBtn.setText("Done");
+        finBtn.setBounds(70,380,90,30);
+        invPanel.add(finBtn);
+        finBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                finBtnActionPerformed(evt);
+            }
+
+            private void finBtnActionPerformed(ActionEvent evt) {
+                setVisible(false);
+                Menu menu = new Menu();
+                menu.setVisible(true);
+            }
+        });
+        
+        clrBtn.setText("Clear");
+        clrBtn.setBounds(300,320,90,30);
+        invPanel.add(clrBtn);
+        clrBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(
+                    ActionEvent evt) {
+                clrBtnActionPerformed(evt);
+            }
+
+            private void clrBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource()==clrBtn){
+                    prodIdTxt.setText(null);
+                    prodTxt.setText(null);
+                    catTxt.setText(null);
+                    qtyTxt.setText(null);
+                    priceTxt.setText(null);
+                }
+            }
+        });
+        
+        backBtn.setText("back");
+        backBtn.setBounds(300,380,90,30);
+        invPanel.add(backBtn);
+        backBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                backBtnActionPerformed(evt);
+            }
+
+            private void backBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource()== backBtn){
+                    setVisible(false);
+                    Menu menu = new Menu();
+                    menu.setVisible(true);
+                }
+            }
+        });
+        
+        
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
+    }
+    public static void main(String[] args) {
+        new InvEntry();
+    }
+}
+
+
+//Transfer page
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+
+
+public class RetailPoint extends javax.swing.JFrame {
+
+    int whQty;
+    String branch;
+    public RetailPoint() {
+        initComponents();
+    }
+
+    
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        nameTxt = new javax.swing.JTextField();
+        qtyTxt = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        chawamaBtn = new javax.swing.JRadioButton();
+        mtendereBtn = new javax.swing.JRadioButton();
+        materoBtn = new javax.swing.JRadioButton();
+        jButton1 = new javax.swing.JButton();
+        backBtn = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Serif", 1, 36)); // NOI18N
+        jLabel1.setText("Outlet Transfers");
+
+        jLabel2.setText("Product Name :");
+
+        jLabel3.setText("Product Quantity :");
+
+        jLabel4.setText("Branch :");
+
+        chawamaBtn.setText("Chawama");
+        chawamaBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chawamaBtnActionPerformed(evt);
+            }
+        });
+
+        mtendereBtn.setText("Mtendere");
+        mtendereBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mtendereBtnActionPerformed(evt);
+            }
+        });
+
+        materoBtn.setText("Matero");
+        materoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                materoBtnActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Move");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        backBtn.setText("Back");
+        backBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backBtnActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Clear");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(qtyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(chawamaBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(mtendereBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(materoBtn))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(backBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                                .addGap(171, 171, 171)))
+                        .addGap(49, 49, 49))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(90, 90, 90))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(117, 117, 117)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jLabel1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel2)
+                        .addGap(33, 33, 33))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(qtyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(chawamaBtn)
+                    .addComponent(mtendereBtn)
+                    .addComponent(materoBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(128, 128, 128))
+        );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 0, 520, -1));
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>                        
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        if(evt.getSource() == jButton3){
+            nameTxt.setText(null);
+            qtyTxt.setText(null);
+            chawamaBtn.setSelected(false);
+            mtendereBtn.setSelected(false);
+            materoBtn.setSelected(false);
+        }
+    }                                        
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        if(evt.getSource() == backBtn){
+            Menu menu = new Menu();
+            menu.setVisible(true);
+            this.setVisible(false);
+        }
+    }                                       
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        if (evt.getSource() == jButton1) {
+        String productName = nameTxt.getText();
+        String quantityStr = qtyTxt.getText();
+        int quantity;
+
+        try {
+            quantity = Integer.parseInt(quantityStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Quantity must be a valid integer");
+            return;
+        }
+
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc:derby://musi_trading_inventory","root","Victoria2629")) {
+            String sql = "SELECT Quantity FROM `musi_trading_inventory`.`warehouse_stock` WHERE ProductName=?";
+            try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                stmt.setString(1, productName);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        int warehouseQuantity = rs.getInt("Quantity");
+                        if (warehouseQuantity < quantity) {
+                            JOptionPane.showMessageDialog(null, "Quantity not available in warehouse");
+                            return;
+                        } else if (warehouseQuantity == 0) {
+                            JOptionPane.showMessageDialog(null, "Product not available in warehouse");
+                            return;
+                        }
+                        int warehouseQuantityUpdate = warehouseQuantity - quantity;
+                        
+                        String updateSql = "UPDATE `warehouse_stock` SET Quantity=? WHERE ProductName=?";
+                            try (PreparedStatement updateStmt = con.prepareStatement(updateSql)) {
+                                updateStmt.setInt(1, warehouseQuantityUpdate);
+                                updateStmt.setString(2, productName);
+                                int rowsUpdated = updateStmt.executeUpdate();
+                                if (rowsUpdated <= 0) {
+                                    JOptionPane.showMessageDialog(null, "Failed to update warehouse stock");
+                                    return;
+                                }
+                            }
+                       
+                        String insertSql = "INSERT INTO `musi_trading_inventory`.`branch_stock`(`Branch`, `ProdID`, `ProductName`, `Category`, `Quantity`, `UnitPrice`) VALUES(?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement insertStmt = con.prepareStatement(insertSql)) {
+                            String selectSql = "SELECT * from `musi_trading_inventory`.`warehouse_stock` WHERE ProductName=?";
+                            try (PreparedStatement selectStmt = con.prepareStatement(selectSql)) {
+                                selectStmt.setString(1, productName);
+                                try (ResultSet selectRs = selectStmt.executeQuery()) {
+                                    if (selectRs.next()) {
+                                        int prodId = selectRs.getInt("ProdID");
+                                        String prodName = selectRs.getString("ProductName");
+                                        String category = selectRs.getString("Category");
+                                        
+                                        double unitPrice = selectRs.getDouble("UnitPrice");
+
+                                        insertStmt.setString(1, branch);
+                                        insertStmt.setInt(2, prodId);
+                                        insertStmt.setString(3, prodName);
+                                        insertStmt.setString(4, category);
+                                        insertStmt.setInt(5, quantity);
+                                        insertStmt.setDouble(6, unitPrice);
+
+                                        int rowsAffected = insertStmt.executeUpdate();
+                                        if (rowsAffected > 0) {
+                                            JOptionPane.showMessageDialog(null, "Transfer successful");
+                                            return;
+                                        }
+                                        
+                                        
+                        
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+        }
+        JOptionPane.showMessageDialog(null, "Transfer failed");
+    }
+    }                                        
+
+    private void chawamaBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        if(chawamaBtn.isSelected()){
+            branch = "chawama";
+            mtendereBtn.setSelected(false);
+            materoBtn.setSelected(false);
+        }
+    }                                          
+
+    private void mtendereBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        if(mtendereBtn.isSelected()){
+            branch = "mtendere";
+            chawamaBtn.setSelected(false);
+            materoBtn.setSelected(false);
+        }
+    }                                           
+
+    private void materoBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        if(materoBtn.isSelected()){
+            branch = "matero";
+            mtendereBtn.setSelected(false);
+            chawamaBtn.setSelected(false);
+        }
+    }                                         
+
+    
+    public static void main(String args[]) {
+       
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(RetailPoint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(RetailPoint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(RetailPoint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(RetailPoint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+       
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new RetailPoint().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton backBtn;
+    private javax.swing.JRadioButton chawamaBtn;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton materoBtn;
+    private javax.swing.JRadioButton mtendereBtn;
+    private javax.swing.JTextField nameTxt;
+    private javax.swing.JTextField qtyTxt;
+    // End of variables declaration                   
+}
+
+//Stock Display page
+import java.sql.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+
+public class StockDisplay extends JFrame {
+    private JButton bckBtn;
+    private JTable dataTable;
+
+    public  StockDisplay() {
+        super("Display Data");
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        bckBtn = new JButton();
+        bckBtn.setText("Back");
+        bckBtn.setBounds(410,400,70,40);
+        add(bckBtn);
+        bckBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                bckBtnActionPerformed(evt);
+            }
+
+            private void bckBtnActionPerformed(ActionEvent evt) {
+                if(evt.getSource()== bckBtn){
+                    setVisible(false);
+                    Menu menu = new Menu();
+                    menu.setVisible(true);
+                }
+            }
+        });
+        
+        String[] columnNames = {"ProdID", "ProductName", "Category","Quantity","UnitPrice"};
+        Object[][] rowData = {};
+
+        dataTable = new JTable(rowData, columnNames);
+        JScrollPane scrollPane = new JScrollPane(dataTable);
+
+        add(scrollPane, BorderLayout.CENTER);
+        pack();
+
+        try {
+            
+            
+            
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc:derby://musi_trading_inventory","root","Victoria2629");
+            String sql = "SELECT * FROM warehouse_stock";
+            Statement st = connection.createStatement();
+            ResultSet resultSet = st.executeQuery(sql);
+
+            DefaultTableModel tableModel = new DefaultTableModel();
+            tableModel.setColumnIdentifiers(columnNames);
+            while (resultSet.next()) {
+                System.out.println("connection successful");
+                Object[] row = {resultSet.getInt("ProdID"), resultSet.getString("ProductName"), resultSet.getString("Category"),
+                resultSet.getInt("Quantity"), resultSet.getDouble("UnitPrice")};
+                tableModel.addRow(row);
+            }
+             dataTable.setModel(tableModel);
+            resultSet.close();
+            st.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("connection failed");
+        }
+        setSize(900, 500);
+        setLocationRelativeTo(null);
+        setResizable(false); 
+    }
+    
+
+    public static void main(String[] args) {
+        new StockDisplay().setVisible(true);
+    }
+}

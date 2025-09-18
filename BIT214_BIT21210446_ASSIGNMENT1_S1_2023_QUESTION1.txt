@@ -1,0 +1,125 @@
+//Server
+package chat;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+public class Server {
+    private static final int PORT = 3333;
+    private static ArrayList<Socket> clients = new ArrayList();
+
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
+            System.out.println("Server is ready");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket);
+
+                clients.add(clientSocket);
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                clientHandler.start();
+            }
+        } catch (IOException e) {
+            System.out.println("Error in server: " + e.getMessage());
+        }
+    }
+
+    public static void broadcast(String message, Socket sender) {
+        for (Socket client : clients) {
+            if (!client.equals(sender)) {
+                try {
+                    PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                    out.println(message);
+                } catch (IOException e) {
+                    System.out.println("Error broadcasting message to client: " + e.getMessage());
+                }
+            }
+        }
+    }
+}
+
+class ClientHandler extends Thread {
+    private Socket clientSocket;
+    private BufferedReader in;
+
+    public ClientHandler(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+        try {
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        } catch (IOException e) {
+            System.out.println("Error getting input stream from client: " + e.getMessage());
+        }
+    }
+
+    public void run() {
+        String line;
+        try {
+            while ((line = in.readLine()) != null) {
+                System.out.println("Received message: " + line);
+                Server.broadcast(line, clientSocket);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading message from client: " + e.getMessage());
+        } finally {
+            try {
+                in.close();
+                clientSocket.close();
+                System.out.println("Client disconnected: " + clientSocket);
+                
+            } catch (IOException e) {
+                System.out.println("Error closing connection with client: " + e.getMessage());
+            }
+        }
+    }
+}
+
+
+//client
+package chat;
+
+import java.io.*;
+import static java.lang.System.out;
+import java.net.*;
+import java.util.*;
+import javax.swing.JOptionPane;
+
+public class Client {
+    private static final String HOST = "localhost";
+    private static final int PORT = 3333;
+
+    public static void main(String[] args) {
+        
+        String name = JOptionPane.showInputDialog("Enter name");
+        
+        try {
+           
+            
+            
+            Socket clientSocket = new Socket(HOST, PORT);
+            System.out.println(name +" Connected Begin chat");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            Scanner scanner = new Scanner(System.in);
+            String line;
+            while (true) {
+                System.out.print( " Enter message: ");
+                line = scanner.nextLine();
+                out.println(line);
+                if (line.equalsIgnoreCase("quit")) {
+                    break;
+                }
+                System.out.println( "Received response: " + in.readLine());
+            }
+
+            in.close();
+            out.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            System.out.println("Error in client: " + e.getMessage());
+        }
+    }
+}
